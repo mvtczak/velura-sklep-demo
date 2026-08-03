@@ -15,10 +15,40 @@ const playfair = Playfair_Display({
   subsets: ["latin", "latin-ext"],
 });
 
+const SITE_URL = "https://velura-sklep-demo.vercel.app";
+
 export const metadata: Metadata = {
-  title: "VELURA — Kosmetyki premium",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "VELURA — Kosmetyki premium",
+    template: "%s | VELURA",
+  },
   description:
     "VELURA — pielęgnacja, makijaż i perfumy premium. Darmowa dostawa od 200 zł, płatność kartą i BLIK.",
+  keywords: ["kosmetyki", "pielęgnacja twarzy", "makijaż", "perfumy", "sklep kosmetyczny", "VELURA"],
+  openGraph: {
+    type: "website",
+    locale: "pl_PL",
+    siteName: "VELURA",
+    title: "VELURA — Kosmetyki premium",
+    description:
+      "Starannie dobrane kosmetyki do pielęgnacji, makijażu i zapachu. Darmowa dostawa od 200 zł.",
+    url: SITE_URL,
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
+        width: 1200,
+        height: 630,
+        alt: "VELURA — kosmetyki premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VELURA — Kosmetyki premium",
+    description: "Pielęgnacja, makijaż i perfumy premium. Darmowa dostawa od 200 zł.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
