@@ -3,6 +3,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
 
+import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 const categories = [
   { name: "Pielęgnacja twarzy", image: "https://images.unsplash.com/photo-1580870069867-74c57ee1bb07?q=80&w=800&auto=format&fit=crop" },
   { name: "Makijaż", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop" },
@@ -20,12 +28,12 @@ export default async function Home() {
   return (
     <div>
       <section className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 py-16 md:grid-cols-2 md:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 md:grid-cols-2 md:py-24">
           <div>
             <span className="text-xs uppercase tracking-[0.3em] text-rose">
               Nowa kolekcja
             </span>
-            <h1 className="mt-4 font-serif-display text-4xl leading-tight text-ink md:text-5xl">
+            <h1 className="mt-4 font-serif-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl">
               Piękno jako
               <br />
               codzienny rytuał.
@@ -34,7 +42,7 @@ export default async function Home() {
               Starannie dobrane kosmetyki do pielęgnacji, makijażu i zapachu —
               testowane dermatologicznie, bez okrucieństwa wobec zwierząt.
             </p>
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 flex flex-wrap gap-3 sm:gap-4">
               <Link
                 href="/shop"
                 className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-white transition hover:bg-rose-dark"
@@ -62,8 +70,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-12">
-        <h2 className="font-serif-display text-2xl text-ink">Kategorie</h2>
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <h2 className="font-serif-display text-xl text-ink sm:text-2xl">Kategorie</h2>
         <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           {categories.map((c) => (
             <Link
@@ -87,14 +95,14 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-12">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div className="flex items-end justify-between">
-          <h2 className="font-serif-display text-2xl text-ink">Polecane</h2>
+          <h2 className="font-serif-display text-xl text-ink sm:text-2xl">Polecane</h2>
           <Link href="/shop" className="text-sm text-rose hover:text-rose-dark">
             Zobacz wszystkie →
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10 md:grid-cols-4">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -102,7 +110,7 @@ export default async function Home() {
       </section>
 
       <section className="border-t border-line bg-cream-dark">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 text-center md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 text-center sm:px-6 sm:py-14 md:grid-cols-3">
           <div>
             <h3 className="font-serif-display text-lg text-ink">Darmowa dostawa</h3>
             <p className="mt-2 text-sm text-ink-soft">Od 200 zł, kurier w 1–2 dni robocze.</p>
