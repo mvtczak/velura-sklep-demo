@@ -205,7 +205,7 @@ const FREE_SHIPPING_THRESHOLD = 20000;
 
 async function seedFakeOrders() {
   const existingOrders = await prisma.order.count();
-  if (existingOrders > 0) {
+  if (existingOrders >= 5) {
     console.log(`Orders already present (${existingOrders}), skipping fake order seed.`);
     return;
   }
