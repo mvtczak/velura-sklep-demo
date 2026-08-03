@@ -65,7 +65,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-6 py-24 text-center">
+      <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
         <h1 className="font-serif-display text-3xl text-ink">Twój koszyk jest pusty</h1>
         <p className="mt-3 text-ink-soft">Dodaj produkty, aby przejść do zamówienia.</p>
         <Link
@@ -79,10 +79,10 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
       <h1 className="font-serif-display text-3xl text-ink">Koszyk i dostawa</h1>
 
-      <div className="mt-10 grid gap-12 lg:grid-cols-3">
+      <div className="mt-8 grid gap-10 sm:mt-10 sm:gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <ul className="space-y-6">
             {items.map((item) => (
