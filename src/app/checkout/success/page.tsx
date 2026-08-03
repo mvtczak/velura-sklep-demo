@@ -37,7 +37,7 @@ export default async function CheckoutSuccessPage({
   if (!order) notFound();
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+    <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6 sm:py-20">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose/10 text-2xl text-rose">
         ✓
       </div>
