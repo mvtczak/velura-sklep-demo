@@ -151,6 +151,112 @@ const products = [
   },
 ];
 
+
+const firstNames = [
+  "Anna", "Katarzyna", "Magdalena", "Agnieszka", "Aleksandra", "Natalia",
+  "Karolina", "Paulina", "Monika", "Weronika", "Julia", "Zofia",
+  "Jakub", "Piotr", "Michał", "Tomasz", "Krzysztof", "Adam",
+  "Marcin", "Bartosz", "Dawid", "Kamil", "Łukasz", "Patryk",
+];
+
+const lastNames = [
+  "Kowalska", "Nowak", "Wiśniewska", "Wójcik", "Kowalczyk", "Kamińska",
+  "Lewandowska", "Zielińska", "Szymańska", "Woźniak", "Dąbrowska", "Kozłowska",
+  "Kowalski", "Nowicki", "Wójcicki", "Kamiński", "Lewandowski", "Zieliński",
+  "Szymański", "Wojciechowski", "Dąbrowski", "Kozłowski", "Jankowski", "Mazur",
+];
+
+const cities: { city: string; postalCode: string }[] = [
+  { city: "Warszawa", postalCode: "00-001" },
+  { city: "Kraków", postalCode: "30-002" },
+  { city: "Wrocław", postalCode: "50-003" },
+  { city: "Poznań", postalCode: "60-004" },
+  { city: "Gdańsk", postalCode: "80-005" },
+  { city: "Łódź", postalCode: "90-006" },
+  { city: "Szczecin", postalCode: "70-007" },
+  { city: "Katowice", postalCode: "40-008" },
+  { city: "Lublin", postalCode: "20-009" },
+  { city: "Białystok", postalCode: "15-010" },
+  { city: "Rzeszów", postalCode: "35-011" },
+  { city: "Gdynia", postalCode: "81-012" },
+];
+
+const streets = [
+  "Kwiatowa", "Słoneczna", "Leśna", "Ogrodowa", "Polna", "Krótka",
+  "Długa", "Szkolna", "Parkowa", "Spokojna", "Zielona", "Wiśniowa",
+  "Lipowa", "Brzozowa", "Klonowa", "Akacjowa", "Sportowa", "Graniczna",
+];
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomPastDate(maxDaysAgo: number): Date {
+  // Skew towards more recent days for a realistic growth curve.
+  const t = Math.pow(Math.random(), 1.6);
+  const daysAgo = t * maxDaysAgo;
+  const ms = daysAgo * 24 * 60 * 60 * 1000;
+  const jitter = Math.random() * 24 * 60 * 60 * 1000;
+  return new Date(Date.now() - ms - jitter);
+}
+
+const SHIPPING_CENTS = 1500;
+const FREE_SHIPPING_THRESHOLD = 20000;
+
+async function seedFakeOrders() {
+  const existingOrders = await prisma.order.count();
+  if (existingOrders > 0) {
+    console.log(`Orders already present (${existingOrders}), skipping fake order seed.`);
+    return;
+  }
+
+  const allProducts = await prisma.product.findMany();
+  const ORDER_COUNT = 64;
+
+  for (let i = 0; i < ORDER_COUNT; i++) {
+    const firstName = pick(firstNames);
+    const lastName = pick(lastNames);
+    const { city, postalCode } = pick(cities);
+    const street = pick(streets);
+    const houseNumber = 1 + Math.floor(Math.random() * 98);
+    const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`;
+
+    const itemCount = 1 + Math.floor(Math.random() * 3);
+    const chosen = new Set<string>();
+    while (chosen.size < itemCount) {
+      chosen.add(pick(allProducts).id);
+    }
+
+    const items = Array.from(chosen).map((productId) => {
+      const product = allProducts.find((p) => p.id === productId)!;
+      const quantity = 1 + Math.floor(Math.random() * 2);
+      return { productId, quantity, priceCents: product.priceCents };
+    });
+
+    const subtotal = items.reduce((sum, it) => sum + it.priceCents * it.quantity, 0);
+    const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CENTS;
+    const totalCents = subtotal + shipping;
+    const createdAt = randomPastDate(35);
+    const status = Math.random() < 0.9 ? "paid" : "pending";
+
+    await prisma.order.create({
+      data: {
+        email,
+        name: `${firstName} ${lastName}`,
+        address: `ul. ${street} ${houseNumber}`,
+        city,
+        postalCode,
+        totalCents,
+        status,
+        createdAt,
+        items: { create: items },
+      },
+    });
+  }
+
+  console.log(`Seeded ${ORDER_COUNT} fake demo orders.`);
+}
+
 async function main() {
   console.log("Seeding database...");
   for (const p of products) {
@@ -161,6 +267,8 @@ async function main() {
     });
   }
   console.log(`Seeded ${products.length} products.`);
+
+  await seedFakeOrders();
 }
 
 main()
