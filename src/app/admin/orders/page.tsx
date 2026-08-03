@@ -18,6 +18,18 @@ function pctChange(current: number, previous: number): string | null {
   return `${sign}${change.toFixed(0)}%`;
 }
 
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span
+      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+        status === "paid" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+      }`}
+    >
+      {status === "paid" ? "Opłacone" : "Oczekujące"}
+    </span>
+  );
+}
+
 export default async function AdminOrdersPage({
   searchParams,
 }: {
@@ -99,7 +111,7 @@ export default async function AdminOrdersPage({
   const maxDayRevenue = Math.max(1, ...days.map((d) => d.revenue));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <h1 className="font-serif-display text-2xl text-ink sm:text-3xl">Panel administracyjny</h1>
         <div className="text-left sm:text-right">
@@ -108,12 +120,12 @@ export default async function AdminOrdersPage({
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-2xl border border-line bg-white p-5">
+          <div key={k.label} className="rounded-2xl border border-line bg-white p-4 sm:p-5">
             <div className="text-xs uppercase tracking-wide text-ink-soft">{k.label}</div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-serif-display text-2xl text-ink">{formatPrice(k.revenue)}</span>
+              <span className="font-serif-display text-xl text-ink sm:text-2xl">{formatPrice(k.revenue)}</span>
               {k.change && (
                 <span className={`text-xs font-medium ${k.change.startsWith("-") ? "text-red-500" : "text-emerald-600"}`}>
                   {k.change}
@@ -125,23 +137,86 @@ export default async function AdminOrdersPage({
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-line bg-white p-5 sm:p-6">
+      <div className="mt-6 rounded-2xl border border-line bg-white p-4 sm:mt-8 sm:p-6">
         <h2 className="text-sm font-medium text-ink">Przychód dzienny — ostatnie 14 dni</h2>
-        <div className="mt-5 flex items-end gap-1.5 sm:gap-2" style={{ height: 120 }}>
-          {days.map((d) => (
-            <div key={d.label} className="flex flex-1 flex-col items-center gap-1.5">
-              <div
-                className="w-full rounded-t bg-rose/70 transition hover:bg-rose"
-                style={{ height: `${Math.max(4, (d.revenue / maxDayRevenue) * 100)}px` }}
-                title={`${d.label}: ${formatPrice(d.revenue)}`}
-              />
-              <span className="text-[10px] text-ink-soft sm:text-xs">{d.label}</span>
-            </div>
-          ))}
+        <div className="mt-5 overflow-x-auto">
+          <div className="flex min-w-[480px] items-end gap-1.5 sm:min-w-0 sm:gap-2" style={{ height: 120 }}>
+            {days.map((d) => (
+              <div key={d.label} className="flex flex-1 flex-col items-center gap-1.5">
+                <div
+                  className="w-full rounded-t bg-rose/70 transition hover:bg-rose"
+                  style={{ height: `${Math.max(4, (d.revenue / maxDayRevenue) * 100)}px` }}
+                  title={`${d.label}: ${formatPrice(d.revenue)}`}
+                />
+                <span className="text-[10px] text-ink-soft sm:text-xs">{d.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-white">
+      {/* Mobile: expandable card list */}
+      <div className="mt-6 rounded-2xl border border-line bg-white sm:hidden">
+        {orders.length === 0 ? (
+          <p className="px-4 py-10 text-center text-sm text-ink-soft">Brak zamówień.</p>
+        ) : (
+          orders.map((order) => (
+            <details key={order.id} className="group border-b border-line px-4 py-3 last:border-0">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
+                <div className="min-w-0">
+                  <div className="truncate font-medium text-ink">{order.name}</div>
+                  <div className="mt-1 flex items-center gap-2">
+                    <StatusBadge status={order.status} />
+                    <span className="text-xs text-ink-soft">
+                      {new Intl.DateTimeFormat("pl-PL", { dateStyle: "short" }).format(order.createdAt)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="font-medium text-ink">{formatPrice(order.totalCents)}</span>
+                  <span className="flex items-center gap-1 text-xs text-rose">
+                    Rozwiń
+                    <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                      className="shrink-0 transition group-open:rotate-180"
+                    >
+                      <path d="M2.5 5 7 9.5 11.5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+              </summary>
+
+              <div className="mt-3 space-y-2.5 rounded-xl bg-cream-dark/50 p-3 text-sm">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-ink-soft">Zamówienie</div>
+                  <div className="font-mono text-xs text-ink">{order.id.slice(-8).toUpperCase()}</div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-ink-soft">Kontakt</div>
+                  <div className="text-ink-soft">{order.email}</div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-ink-soft">Adres wysyłki</div>
+                  <div className="text-ink-soft">{order.address}</div>
+                  <div className="text-ink-soft">{order.postalCode} {order.city}</div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-ink-soft">Produkty</div>
+                  <div className="text-ink-soft">
+                    {order.items.map((i) => `${i.product.name} ×${i.quantity}`).join(", ")}
+                  </div>
+                </div>
+              </div>
+            </details>
+          ))
+        )}
+      </div>
+
+      {/* Desktop / tablet: full table */}
+      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-line bg-white sm:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-line bg-cream-dark text-xs uppercase tracking-wide text-ink-soft">
             <tr>
@@ -172,15 +247,7 @@ export default async function AdminOrdersPage({
                   {order.items.map((i) => `${i.product.name} ×${i.quantity}`).join(", ")}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                      order.status === "paid"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
-                    {order.status === "paid" ? "Opłacone" : "Oczekujące"}
-                  </span>
+                  <StatusBadge status={order.status} />
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-ink-soft">
                   {new Intl.DateTimeFormat("pl-PL", {
