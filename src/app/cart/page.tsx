@@ -126,6 +126,10 @@ export default function CartPage() {
 
           <form onSubmit={handleCheckout} className="mt-10 space-y-4">
             <h2 className="font-serif-display text-xl text-ink">Dane do wysyłki</h2>
+            <div className="rounded-xl border border-amber-600/30 bg-amber-50 px-4 py-3 text-xs text-amber-800 sm:text-sm">
+              To projekt demonstracyjny portfolio — nie podawaj tu prawdziwych danych osobowych. Wpisz dowolne
+              przykładowe imię, adres e-mail i adres wysyłki.
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <input
                 placeholder="Imię i nazwisko"
