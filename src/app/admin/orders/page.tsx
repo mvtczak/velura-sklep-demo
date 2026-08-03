@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
+import AdminNav from "@/components/admin/AdminNav";
 
 export const dynamic = "force-dynamic";
 
@@ -112,7 +113,9 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+      <AdminNav active="orders" />
+
+      <div className="mt-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <h1 className="font-serif-display text-2xl text-ink sm:text-3xl">Panel administracyjny</h1>
         <div className="text-left sm:text-right">
           <div className="text-xs uppercase tracking-wide text-ink-soft">Przychód łącznie (opłacone)</div>
