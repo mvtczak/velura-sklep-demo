@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrdersPage({
   searchParams,
 }: {
@@ -11,7 +13,7 @@ export default async function AdminOrdersPage({
 
   if (adminKey && key !== adminKey) {
     return (
-      <div className="mx-auto max-w-md px-6 py-24">
+      <div className="mx-auto max-w-md px-4 py-16 sm:px-6 sm:py-24">
         <h1 className="font-serif-display text-2xl text-ink">Panel zamówień</h1>
         <p className="mt-2 text-sm text-ink-soft">
           Dostęp chroniony. Dodaj <code className="rounded bg-cream-dark px-1">?key=TWOJ_KLUCZ</code> do
@@ -31,7 +33,7 @@ export default async function AdminOrdersPage({
     .reduce((sum, o) => sum + o.totalCents, 0);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
       <div className="flex items-end justify-between">
         <h1 className="font-serif-display text-3xl text-ink">Panel zamówień</h1>
         <div className="text-right">
