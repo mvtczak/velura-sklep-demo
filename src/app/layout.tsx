@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import PromoBanner from "@/components/PromoBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -59,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
+        <PromoBanner />
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
