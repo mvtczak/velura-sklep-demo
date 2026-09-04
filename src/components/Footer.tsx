@@ -69,7 +69,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-medium text-ink">O projektcie</h4>
+            <h4 className="text-sm font-medium text-ink">O projekcie</h4>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
               VELURA to projekt demonstracyjny portfolio - w pełni działający
               sklep na Next.js, Prisma i Stripe (tryb testowy).
