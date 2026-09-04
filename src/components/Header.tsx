@@ -51,14 +51,19 @@ export default function Header() {
           </svg>
         </button>
 
-        <Link href="/" className="font-serif-display text-xl tracking-[0.15em] text-ink sm:text-2xl">
+        <Link href="/" className="font-serif-display text-xl tracking-[0.15em] text-ink transition hover:text-rose-dark sm:text-2xl">
           VELURA
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm tracking-wide text-ink-soft md:flex">
           {navLinks.map((l) => (
-            <Link key={l.label} href={l.href} className="whitespace-nowrap transition hover:text-ink">
+            <Link
+              key={l.label}
+              href={l.href}
+              className="group relative whitespace-nowrap py-1 transition hover:text-ink"
+            >
               {l.label}
+              <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-rose transition-transform duration-300 group-hover:scale-x-100" />
             </Link>
           ))}
         </nav>
@@ -88,7 +93,7 @@ export default function Header() {
 
           <button
             onClick={toggle}
-            className="relative flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-ink transition hover:border-rose sm:px-4"
+            className="relative flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-ink shadow-soft transition hover:-translate-y-0.5 hover:border-rose hover:shadow-soft-lg sm:px-4"
             aria-label="Otwórz koszyk"
           >
             <span className="hidden sm:inline">Koszyk</span>
