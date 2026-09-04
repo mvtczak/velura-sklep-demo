@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Brak danych do wysyłki." }, { status: 400 });
     }
 
-    // Always price from the database — never trust client-sent prices.
+    // Always price from the database - never trust client-sent prices.
     const productIds = body.items.map((i) => i.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } },
@@ -131,3 +131,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
