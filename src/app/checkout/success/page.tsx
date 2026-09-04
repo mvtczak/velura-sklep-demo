@@ -65,7 +65,7 @@ export default async function CheckoutSuccessPage({
       </div>
 
       <p className="mt-6 text-xs text-ink-soft">
-        To zamówienie testowe — nie zostały pobrane żadne realne środki.
+        To zamówienie testowe - nie zostały pobrane żadne realne środki.
       </p>
 
       <Link
