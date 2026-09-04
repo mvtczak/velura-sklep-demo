@@ -37,7 +37,7 @@ export async function generateMetadata({
       : "Wszystkie produkty";
   return {
     title,
-    description: `Zobacz kolekcję ${category ?? "kosmetyków premium"} VELURA — pielęgnacja, makijaż i perfumy z darmową dostawą od 200 zł.`,
+    description: `Zobacz kolekcję ${category ?? "kosmetyków premium"} VELURA - pielęgnacja, makijaż i perfumy z darmową dostawą od 200 zł.`,
     alternates: { canonical: category ? `/shop?category=${encodeURIComponent(category)}` : "/shop" },
   };
 }
