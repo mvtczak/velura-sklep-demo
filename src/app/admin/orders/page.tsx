@@ -141,7 +141,7 @@ export default async function AdminOrdersPage({
       </div>
 
       <div className="mt-6 rounded-2xl border border-line bg-white p-4 sm:mt-8 sm:p-6">
-        <h2 className="text-sm font-medium text-ink">Przychód dzienny — ostatnie 14 dni</h2>
+        <h2 className="text-sm font-medium text-ink">Przychód dzienny - ostatnie 14 dni</h2>
         <div className="mt-5 overflow-x-auto">
           <div className="flex min-w-[480px] items-end gap-1.5 sm:min-w-0 sm:gap-2" style={{ height: 120 }}>
             {days.map((d) => (
@@ -266,7 +266,7 @@ export default async function AdminOrdersPage({
             {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-ink-soft">
-                  Brak zamówień.
+                  Brak zamówieeń.
                 </td>
               </tr>
             )}
@@ -275,7 +275,7 @@ export default async function AdminOrdersPage({
       </div>
 
       <p className="mt-4 text-xs text-ink-soft">
-        Dane demonstracyjne — klienci i adresy są wygenerowane losowo do celów prezentacji.
+        Dane demonstracyjne - klienci i adresy są wygenerowane losowo do celów prezentacji.
       </p>
     </div>
   );
