@@ -21,7 +21,7 @@ const categories = [
 const trust = [
   {
     title: "Darmowa dostawa",
-    text: "Od 200 zł, kurier w 1-2 dni robocze.",
+    text: "Od 200 zł, kurier w 1–2 dni robocze.",
     icon: (
       <path d="M3 7h11v9H3V7Zm11 3h4l3 3v3h-7v-6ZM6.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm11 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
     ),
@@ -67,7 +67,7 @@ export default async function Home() {
               <span className="font-serif-italic text-rose">rytuał.</span>
             </h1>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-soft">
-              Starannie dobrane kosmetyki do pielęnacji, makijażu i zapachu -
+              Starannie dobrane kosmetyki do pielęgnacji, makijażu i zapachu -
               testowane dermatologicznie, bez okrucieństwa wobec zwierząt.
             </p>
             <div className="mt-9 flex flex-wrap gap-3 sm:gap-4">
