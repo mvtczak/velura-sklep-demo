@@ -81,7 +81,7 @@ export default function ProductsManager({ initialProducts }: { initialProducts: 
   }
 
   function deleteProduct(id: string, name: string) {
-    if (!confirm(`Usunąć „${name}”? (to tylko podgląd — nic nie zniknie z bazy danych)`)) return;
+    if (!confirm(`Usunąć „${name}”? (to tylko podgląd - nic nie zniknie z bazy danych)`)) return;
     setProducts((prev) => prev.filter((p) => p.id !== id));
     notify(`Usunięto „${name}” (tylko lokalnie).`);
   }
@@ -121,7 +121,7 @@ export default function ProductsManager({ initialProducts }: { initialProducts: 
     <div>
       <div className="rounded-2xl border border-rose/30 bg-rose/10 p-4 text-sm text-ink">
         <strong>Tryb demonstracyjny.</strong> Dodawanie, usuwanie, edycja cen i promocje działają w
-        tej przeglądarce, ale niczego nie zapisują w bazie danych — sklep i inni odwiedzający tego
+        tej przeglądarce, ale niczego nie zapisują w bazie danych - sklep i inni odwiedzający tego
         nie zobaczą. Odśwież stronę, aby wrócić do stanu początkowego.
       </div>
 
@@ -207,7 +207,7 @@ export default function ProductsManager({ initialProducts }: { initialProducts: 
         ))}
         {products.length === 0 && (
           <p className="col-span-full py-10 text-center text-sm text-ink-soft">
-            Brak produktów (lokalnie usunięto wszystkie — odśwież stronę, aby przywrócić).
+            Brak produktów (lokalnie usunięto wszystkie - odśwież stronę, aby przywrócić).
           </p>
         )}
       </div>
