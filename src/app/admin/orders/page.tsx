@@ -266,7 +266,7 @@ export default async function AdminOrdersPage({
             {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-ink-soft">
-                  Brak zamówieeń.
+                  Brak zamówień.
                 </td>
               </tr>
             )}
