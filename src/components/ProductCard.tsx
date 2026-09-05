@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, reviewCount } from "@/lib/format";
+import { getTrustBadge, TRUST_ICON_PATHS } from "@/lib/trust-badges";
 
 export type ProductCardData = {
   slug: string;
@@ -13,6 +14,9 @@ export type ProductCardData = {
 };
 
 export default function ProductCard({ product }: { product: ProductCardData }) {
+  const trustBadge = getTrustBadge(product.category);
+  const reviews = reviewCount(product.rating);
+
   return (
     <Link href={`/product/${product.slug}`} className="group block">
       <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream-dark shadow-soft transition duration-300 group-hover:-translate-y-1 group-hover:shadow-soft-lg">
@@ -46,7 +50,14 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
               <path d="M10 1.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L1.3 7.7l6.1-.6L10 1.5Z" />
             </svg>
             {product.rating.toFixed(1)}
+            <span className="text-ink-soft/70">({reviews})</span>
           </span>
+        </div>
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-soft">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-rose">
+            <path d={TRUST_ICON_PATHS[trustBadge.icon]} />
+          </svg>
+          {trustBadge.label}
         </div>
       </div>
     </Link>
