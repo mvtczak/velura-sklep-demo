@@ -10,6 +10,9 @@ export type CartItem = {
   image: string;
   priceCents: number;
   quantity: number;
+  // Set when this item was added as part of a "Zbuduj zestaw" bundle; items
+  // sharing the same bundleId are priced together for the bundle discount.
+  bundleId?: string;
 };
 
 type CartState = {
@@ -35,7 +38,7 @@ export const useCartStore = create<CartState>()(
           set({
             items: get().items.map((i) =>
               i.productId === item.productId
-                ? { ...i, quantity: i.quantity + quantity }
+                ? { ...i, quantity: i.quantity + quantity, bundleId: i.bundleId ?? item.bundleId }
                 : i
             ),
           });
