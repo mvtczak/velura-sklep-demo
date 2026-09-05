@@ -2,9 +2,10 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, reviewCount } from "@/lib/format";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
+import ShadeMatcher from "@/components/ShadeMatcher";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,7 @@ export default async function ProductPage({
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: product.rating,
-      reviewCount: Math.max(8, Math.round(product.rating * 12)),
+      reviewCount: reviewCount(product.rating),
     },
     offers: {
       "@type": "Offer",
@@ -116,7 +117,9 @@ export default async function ProductPage({
           <h1 className="mt-2 font-serif-display text-2xl text-ink sm:text-3xl">{product.name}</h1>
           <div className="mt-3 flex items-center gap-3">
             <span className="text-xl text-ink">{formatPrice(product.priceCents)}</span>
-            <span className="text-sm text-ink-soft">★ {product.rating.toFixed(1)} · dostępne</span>
+            <span className="text-sm text-ink-soft">
+              ★ {product.rating.toFixed(1)} ({reviewCount(product.rating)} opinii) · dostępne
+            </span>
           </div>
           <p className="mt-6 max-w-md text-ink-soft">{product.description}</p>
 
@@ -129,6 +132,12 @@ export default async function ProductPage({
               priceCents={product.priceCents}
             />
           </div>
+
+          {product.slug === "podklad-silk-veil" && (
+            <div className="mt-8">
+              <ShadeMatcher />
+            </div>
+          )}
 
           <dl className="mt-10 space-y-3 border-t border-line pt-6 text-sm">
             <div className="flex justify-between">
