@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/shop?category=Makijaż", label: "Makijaż" },
   { href: "/shop?category=Perfumy", label: "Perfumy" },
   { href: "/shop?category=Włosy", label: "Włosy" },
+  { href: "/zestaw", label: "Zbuduj zestaw" },
 ];
 
 export default function Header() {
