@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { stripe, stripeConfigured } from "@/lib/stripe";
+import { BUNDLE_DISCOUNT_PERCENT, computeBundleDiscountCents } from "@/lib/bundle";
 
 const SHIPPING_CENTS = 1500;
 const FREE_SHIPPING_THRESHOLD = 20000;
@@ -19,6 +20,10 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as {
       items: IncomingItem[];
       customer: Customer;
+      // Groups of productIds the client claims form a "Zbuduj zestaw" bundle.
+      // This is only a hint for which items to check - the discount itself
+      // is always recomputed from the database below, never trusted as-sent.
+      bundleGroups?: string[][];
     };
 
     if (!body.items?.length) {
@@ -57,8 +62,23 @@ export async function POST(req: NextRequest) {
       (sum, li) => sum + li.product.priceCents * li.quantity,
       0
     );
-    const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CENTS;
-    const total = subtotal + shipping;
+
+    // Bundle discount is always recomputed here from the DB-priced products
+    // and the quantities actually being purchased - the client only tells us
+    // which product IDs it thinks form a bundle, never how much it's worth.
+    const discountCents = computeBundleDiscountCents(
+      lineItems.map((li) => ({
+        id: li.product.id,
+        priceCents: li.product.priceCents,
+        category: li.product.category,
+        quantity: li.quantity,
+      })),
+      body.bundleGroups
+    );
+
+    const discountedSubtotal = Math.max(0, subtotal - discountCents);
+    const shipping = discountedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CENTS;
+    const total = discountedSubtotal + shipping;
 
     const order = await prisma.order.create({
       data: {
@@ -84,6 +104,17 @@ export async function POST(req: NextRequest) {
     if (!stripeConfigured || !stripe) {
       // Demo fallback: no Stripe keys configured, simulate a completed order.
       return NextResponse.json({ url: `${origin}/checkout/success?order_id=${order.id}` });
+    }
+
+    let discountCoupon: string | undefined;
+    if (discountCents > 0) {
+      const coupon = await stripe.coupons.create({
+        amount_off: discountCents,
+        currency: "pln",
+        duration: "once",
+        name: `Rabat za zestaw (-${BUNDLE_DISCOUNT_PERCENT}%)`,
+      });
+      discountCoupon = coupon.id;
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -112,6 +143,7 @@ export async function POST(req: NextRequest) {
             ]
           : []),
       ],
+      ...(discountCoupon ? { discounts: [{ coupon: discountCoupon }] } : {}),
       metadata: { orderId: order.id },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout/cancel`,
