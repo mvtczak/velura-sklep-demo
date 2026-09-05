@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cartTotal, useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
+import { BUNDLE_DISCOUNT_PERCENT, BUNDLE_SIZE } from "@/lib/bundle";
 
 const SHIPPING_CENTS = 1500;
 const FREE_SHIPPING_THRESHOLD = 20000;
@@ -26,11 +27,33 @@ export default function CartPage() {
 
   useEffect(() => setMounted(true), []);
 
+  const bundleGroups = useMemo(() => {
+    const map = new Map<string, string[]>();
+    for (const item of items) {
+      if (!item.bundleId) continue;
+      const group = map.get(item.bundleId) ?? [];
+      group.push(item.productId);
+      map.set(item.bundleId, group);
+    }
+    return Array.from(map.values());
+  }, [items]);
+
   if (!mounted) return null;
 
   const subtotal = cartTotal(items);
-  const shipping = items.length === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CENTS;
-  const total = subtotal + shipping;
+  // Preview only - the discount that's actually charged is always
+  // recomputed server-side from the database in /api/checkout.
+  const discount = bundleGroups.reduce((sum, group) => {
+    if (group.length !== BUNDLE_SIZE) return sum;
+    const groupSubtotal = group.reduce((s, productId) => {
+      const item = items.find((i) => i.productId === productId);
+      return s + (item ? item.priceCents : 0);
+    }, 0);
+    return sum + Math.round((groupSubtotal * BUNDLE_DISCOUNT_PERCENT) / 100);
+  }, 0);
+  const discountedSubtotal = subtotal - discount;
+  const shipping = items.length === 0 || discountedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CENTS;
+  const total = discountedSubtotal + shipping;
 
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +69,7 @@ export default function CartPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, customer: form }),
+        body: JSON.stringify({ items, customer: form, bundleGroups }),
       });
       const data = await res.json();
 
@@ -92,7 +115,14 @@ export default function CartPage() {
                 </div>
                 <div className="flex flex-1 flex-col">
                   <div className="flex items-start justify-between">
-                    <span className="font-medium text-ink">{item.name}</span>
+                    <span className="font-medium text-ink">
+                      {item.name}
+                      {item.bundleId && (
+                        <span className="ml-2 rounded-full bg-rose/10 px-2 py-0.5 text-[10px] font-medium text-rose-dark">
+                          Zestaw −{BUNDLE_DISCOUNT_PERCENT}%
+                        </span>
+                      )}
+                    </span>
                     <button
                       onClick={() => removeItem(item.productId)}
                       className="text-xs text-ink-soft hover:text-rose"
@@ -183,6 +213,12 @@ export default function CartPage() {
               <span>Suma częściowa</span>
               <span className="text-ink">{formatPrice(subtotal)}</span>
             </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-rose-dark">
+                <span>Rabat zestawu (-{BUNDLE_DISCOUNT_PERCENT}%)</span>
+                <span>−{formatPrice(discount)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-ink-soft">
               <span>Dostawa</span>
               <span className="text-ink">{shipping === 0 ? "Gratis" : formatPrice(shipping)}</span>
